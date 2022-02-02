@@ -22,9 +22,10 @@ include(ExternalProject)
 include(vcpkg_utilities)
 
 vcpkg_config()
+vcpkg_packagefile("${CMAKE_CURRENT_LIST_DIR}/requirements.txt")
 
 ExternalProject_Add(main_project
-    DEPENDS vcpkg ${VCPKG_DEPENDENCIES}
+    DEPENDS ${VCPKG_DEPENDENCIES}
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src"
     INSTALL_COMMAND ""
     CMAKE_ARGS ${CL_ARGS};

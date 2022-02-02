@@ -44,8 +44,7 @@ function (vcpkg_config)
         BUILD_COMMAND ""
     )
 
-    vcpkg_packagefile("${CMAKE_CURRENT_LIST_DIR}/requirements.txt")
-    
+    set(VCPKG_DEPENDENCIES "vcpkg" PARENT_SCOPE)
 endfunction()
 
 # installs PACKAGE_NAME
