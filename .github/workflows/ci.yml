@@ -1,0 +1,85 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+    workflow_dispatch:
+        branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+    build:
+        name: ${{ matrix.os }} ${{ matrix.build-system }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [windows-latest, ubuntu-latest]
+                build-system: [ninja, visual-studio]
+        
+        # Steps represent a sequence of tasks that will be executed as part of the job
+        steps:
+        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+        - uses: actions/checkout@v2
+    
+        - name: install dependencies (Linux)
+            if: matrix.os == 'ubuntu-latest' && matrix.build-system == 'ninja'
+            run: sudo apt-get install -y ninja-build
+    
+        - name: install dependencies (Windows Ninja)
+            if: matrix.os == 'windows-latest' && matrix.build-system == 'ninja'
+            run: choco install ninja
+    
+        - name: CMake configure (Linux)
+            if: matrix.os == 'ubuntu-latest' && matrix.build-system == 'ninja'
+            run: |
+                mkdir -p build
+                cd build
+                cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja ..
+    
+        - name: CMake configure (Windows VS)
+          if: matrix.os == 'windows-latest' && matrix.build-system == 'visual-studio'
+          shell: cmd
+          run: |
+              mkdir -p build
+              cd build
+              call C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat
+              cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G "Visual Studio 17 2022" ..
+    
+        - name: CMake configure (Windows Ninja)
+          if: matrix.os == 'windows-latest' && matrix.build-system == 'ninja'
+          shell: cmd
+          run: |
+              mkdir -p build
+              cd build
+              call C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat
+              cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ..
+    
+        - name: CMake build (Linux)
+          if: matrix.os == 'ubuntu-latest' && matrix.build-system == 'ninja'
+          run: |
+              cd build
+              cmake --build .
+    
+        - name: CMake build (Windows VS)
+          if: matrix.os == 'windows-latest' && matrix.build-system == 'visual-studio'
+          shell: cmd
+          run: |
+              cd build
+              call C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat
+              cmake --build .
+            
+        - name: CMake build (Windows Ninja)
+          if: matrix.os == 'windows-latest' && matrix.build-system == 'ninja'
+          shell: cmd
+          run: |
+              cd build
+              call C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat
+              cmake --build .
+    

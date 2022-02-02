@@ -4,10 +4,10 @@ cmake_minimum_required(VERSION 3.22.2)
 # MUST be done before call to 'project'
 get_cmake_property(vars CACHE_VARIABLES)
 foreach(var ${vars})
-  get_property(currentHelpString CACHE "${var}" PROPERTY HELPSTRING)
-    if("${currentHelpString}" MATCHES "No help, variable specified on the command line." OR "${currentHelpString}" STREQUAL "")
-        list(APPEND CL_ARGS "-D${var}=${${var}}")
-    endif()
+    get_property(currentHelpString CACHE "${var}" PROPERTY HELPSTRING)
+        if("${currentHelpString}" MATCHES "No help, variable specified on the command line." OR "${currentHelpString}" STREQUAL "")
+            list(APPEND CL_ARGS "-D${var}=${${var}}")
+        endif()
 endforeach()
 
 list(APPEND
@@ -21,11 +21,13 @@ project(top
     LANGUAGES CXX
 )
 
+vcpkg_config()
+
 ExternalProject_Add(main_project
-    DEPENDS ${VCPKG_DEPENDENCIES}
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/src
+    DEPENDS vcpkg ${VCPKG_DEPENDENCIES}
+    SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src"
     INSTALL_COMMAND ""
-    CMAKE_ARGS  ${CL_ARGS};
-                --no-warn-unused-cli;
-                -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
+    CMAKE_ARGS ${CL_ARGS};
+               --no-warn-unused-cli;
+               -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
 )

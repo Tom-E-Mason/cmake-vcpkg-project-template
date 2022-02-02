@@ -1,16 +1,27 @@
 
-include(FetchContent)
+include(ExternalProject)
 
 # clones vcpkg and runs its bootstrapping script
-function (get_vcpkg)
+function (vcpkg_config)
+
+    set(VCPKG_DIR "${CMAKE_BINARY_DIR}/vcpkg/src/vcpkg")
+    set(VCPKG_DIR ${VCPKG_DIR} PARENT_SCOPE)
+    
+    set(BOOTSTRAP_CMD "${VCPKG_DIR}/bootstrap-vcpkg.")
 
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(VCPKG_BINARY "vcpkg.exe")
         set(OSNAME "windows")
+        string(APPEND BOOTSTRAP_CMD "bat")
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         set(VCPKG_BINARY "vcpkg")
         set(OSNAME "linux")
+        string(APPEND BOOTSTRAP_CMD "sh")
+    else()
+        message(FATAL_ERROR "Platform not supported")
     endif()
+
+    set(BOOTSTRAP_CMD ${BOOTSTRAP_CMD} PARENT_SCOPE)
 
     if(${CMAKE_SIZEOF_VOID_P} EQUAL "4")
         set(PLATFORMNAME "x86")
@@ -18,16 +29,23 @@ function (get_vcpkg)
         set(PLATFORMNAME "x64")
     endif()
     
-    set(VCPKG_TRIPLET "${PLATFORMNAME}-${OSNAME}" PARENT_SCOPE)
-
-    add_custom_target(COMMAND "python ${PROJECT_SOURCE_DIR}/scripts/get-vcpkg.py"
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    )
-
-    set(VCPKG_DIR "${PROJECT_SOURCE_DIR}/vcpkg")
-    set(VCPKG_DIR ${VCPKG_DIR} PARENT_SCOPE)
+    set(VCPKG_TRIPLET "${PLATFORMNAME}-${OSNAME}")
+    set(VCPKG_TRIPLET "${VCPKG_TRIPLET}" PARENT_SCOPE)
 
     set(VCPKG_CMD ${VCPKG_DIR}/${VCPKG_BINARY})
+    set(VCPKG_CMD ${VCPKG_CMD} PARENT_SCOPE)
+
+    ExternalProject_Add(vcpkg
+        GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
+        GIT_TAG 2022.01.01
+        INSTALL_COMMAND ${BOOTSTRAP_CMD}
+        PREFIX "vcpkg"
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+    )
+
+    vcpkg_packagefile("${CMAKE_CURRENT_LIST_DIR}/requirements.txt")
+    
 endfunction()
 
 # installs PACKAGE_NAME
