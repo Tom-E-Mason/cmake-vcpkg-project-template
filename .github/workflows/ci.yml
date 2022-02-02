@@ -49,7 +49,6 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        call C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat
         cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G "Visual Studio 16 2019" ..
   
     - name: CMake configure (Windows Ninja)
@@ -72,7 +71,6 @@ jobs:
       shell: cmd
       run: |
         cd build
-        call C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat
         cmake --build .
       
     - name: CMake build (Windows Ninja)
