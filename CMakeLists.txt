@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22.2)
+cmake_minimum_required(VERSION 3.22)
 
 # https://cmake.org/pipermail/cmake/2018-January/067002.html
 # MUST be done before call to 'project'
@@ -10,16 +10,16 @@ foreach(var ${vars})
         endif()
 endforeach()
 
+project(top
+    LANGUAGES CXX
+)
+
 list(APPEND
     CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake
 )
 
 include(ExternalProject)
 include(vcpkg_utilities)
-
-project(top
-    LANGUAGES CXX
-)
 
 vcpkg_config()
 
