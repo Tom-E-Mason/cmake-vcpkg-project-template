@@ -4,7 +4,7 @@ include(ExternalProject)
 # clones vcpkg and runs its bootstrapping script
 function (vcpkg_config)
 
-    if(${ARGC} EQUAL 0)
+    if("${ARGV0}" STREQUAL "")
         set(VCPKG_DIR "${CMAKE_BINARY_DIR}/vcpkg/src/vcpkg")
         set(VCPKG_DIR ${VCPKG_DIR} PARENT_SCOPE)
         
