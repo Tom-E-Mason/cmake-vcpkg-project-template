@@ -22,7 +22,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         build-system: [ninja, visual-studio]
-        vcpkg-instance: ["", "C:\\vcpkg"]
+        vcpkg-instance: ['', "C:\\vcpkg"]
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -41,7 +41,7 @@ jobs:
       if: |
         matrix.os == 'ubuntu-latest'
         && matrix.build-system == 'ninja'
-        && matrix.vcpkg == ""
+        && matrix.vcpkg == ''
       run: |
         mkdir -p build
         cd build
@@ -51,7 +51,7 @@ jobs:
       if: |
         matrix.os == 'windows-latest'
         && matrix.build-system == 'visual-studio'
-        && matrix.vcpkg == ""
+        && matrix.vcpkg == ''
       shell: cmd
       run: |
         mkdir -p build
@@ -62,7 +62,7 @@ jobs:
       if: |
         matrix.os == 'windows-latest'
         && matrix.build-system == 'ninja'
-        && matrix.vcpkg == ""
+        && matrix.vcpkg == ''
       shell: cmd
       run: |
         mkdir -p build
