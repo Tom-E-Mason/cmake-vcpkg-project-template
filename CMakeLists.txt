@@ -21,7 +21,7 @@ list(APPEND
 include(ExternalProject)
 include(vcpkg_utilities)
 
-vcpkg_config()
+vcpkg_config("${VCPKG_INSTANCE}")
 vcpkg_packagefile("${CMAKE_CURRENT_LIST_DIR}/requirements.txt")
 
 ExternalProject_Add(main_project
