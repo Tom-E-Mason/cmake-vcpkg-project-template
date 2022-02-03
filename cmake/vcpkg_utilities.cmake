@@ -29,6 +29,7 @@ function (vcpkg_config)
     else()
         set(VCPKG_DIR "${ARGV0}")
         set(VCPKG_DIR ${VCPKG_DIR} PARENT_SCOPE)
+        add_custom_target(vcpkg)
     endif()
 
     set(VCPKG_DEPENDENCIES "vcpkg" PARENT_SCOPE)
