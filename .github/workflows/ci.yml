@@ -22,7 +22,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         build-system: [ninja, visual-studio]
-        vcpkg-instance: ["", C:\vcpkg]
+        vcpkg-instance: ["", C:\\vcpkg]
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
