@@ -22,7 +22,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         build-system: [ninja, visual-studio]
-        vcpkg-instance: ['', 'C:\vcpkg']
+        vcpkg-instance: ['', 'VCPKG_INSTALLATION_ROOT']
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -54,7 +54,7 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        cmake -DVCPKG_INSTANCE=${{ matrix.vcpkg-instance }} -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G "Visual Studio 16 2019" ..
+        cmake -DVCPKG_INSTANCE=$$env:${{ matrix.vcpkg-instance }} -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G "Visual Studio 16 2019" ..
   
     - name: CMake configure (Windows Ninja)
       if: |
@@ -65,7 +65,7 @@ jobs:
         mkdir -p build
         cd build
         call C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat
-        cmake -DVCPKG_INSTANCE=${{ matrix.vcpkg-instance }} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ..
+        cmake -DVCPKG_INSTANCE=$$env:${{ matrix.vcpkg-instance }} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ..
   
     - name: CMake build (Linux)
       if: matrix.os == 'ubuntu-latest' && matrix.build-system == 'ninja'
