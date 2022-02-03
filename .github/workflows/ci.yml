@@ -38,16 +38,20 @@ jobs:
       run: choco install ninja
   
     - name: CMake configure (Linux)
-      if: matrix.os == 'ubuntu-latest' && matrix.build-system == 'ninja'
-      if: matrix.vcpkg == ""
+      if: |
+        matrix.os == 'ubuntu-latest'
+        && matrix.build-system == 'ninja'
+        && matrix.vcpkg == ""
       run: |
         mkdir -p build
         cd build
         cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja ..
   
     - name: CMake configure (Windows VS)
-      if: matrix.os == 'windows-latest' && matrix.build-system == 'visual-studio'
-      if: matrix.vcpkg == ""
+      if: |
+        matrix.os == 'windows-latest'
+        && matrix.build-system == 'visual-studio'
+        && matrix.vcpkg == ""
       shell: cmd
       run: |
         mkdir -p build
@@ -55,8 +59,10 @@ jobs:
         cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=OFF -DVCPKG_DISABLE_METRICS=ON -DVCPKG_DEVELOPMENT_WARNINGS=OFF -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G "Visual Studio 16 2019" ..
   
     - name: CMake configure (Windows Ninja)
-      if: matrix.os == 'windows-latest' && matrix.build-system == 'ninja'
-      if: matrix.vcpkg == ""
+      if: |
+        matrix.os == 'windows-latest'
+        && matrix.build-system == 'ninja'
+        && matrix.vcpkg == ""
       shell: cmd
       run: |
         mkdir -p build
