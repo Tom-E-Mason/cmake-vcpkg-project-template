@@ -4,24 +4,44 @@ include(ExternalProject)
 # clones vcpkg and runs its bootstrapping script
 function (vcpkg_config)
 
-    set(VCPKG_DIR "${CMAKE_BINARY_DIR}/vcpkg/src/vcpkg")
-    set(VCPKG_DIR ${VCPKG_DIR} PARENT_SCOPE)
-    
-    set(BOOTSTRAP_CMD "${VCPKG_DIR}/bootstrap-vcpkg.")
+    if(${ARGC} EQUAL 0)
+        set(VCPKG_DIR "${CMAKE_BINARY_DIR}/vcpkg/src/vcpkg")
+        set(VCPKG_DIR ${VCPKG_DIR} PARENT_SCOPE)
+        
+        set(BOOTSTRAP_CMD "${VCPKG_DIR}/bootstrap-vcpkg.")
+
+        if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+            string(APPEND BOOTSTRAP_CMD "bat")
+        elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+            string(APPEND BOOTSTRAP_CMD "sh")
+        else()
+            message(FATAL_ERROR "Platform not supported")
+        endif()
+
+        ExternalProject_Add(vcpkg
+            GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
+            GIT_TAG 2022.01.01
+            INSTALL_COMMAND ${BOOTSTRAP_CMD}
+            PREFIX "vcpkg"
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+        )
+    else()
+        set(VCPKG_DIR "${ARGV0}")
+        set(VCPKG_DIR ${VCPKG_DIR} PARENT_SCOPE)
+    endif()
+
+    set(VCPKG_DEPENDENCIES "vcpkg" PARENT_SCOPE)
 
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(VCPKG_BINARY "vcpkg.exe")
         set(OSNAME "windows")
-        string(APPEND BOOTSTRAP_CMD "bat")
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         set(VCPKG_BINARY "vcpkg")
         set(OSNAME "linux")
-        string(APPEND BOOTSTRAP_CMD "sh")
     else()
         message(FATAL_ERROR "Platform not supported")
     endif()
-
-    set(BOOTSTRAP_CMD ${BOOTSTRAP_CMD} PARENT_SCOPE)
 
     if(${CMAKE_SIZEOF_VOID_P} EQUAL "4")
         set(PLATFORMNAME "x86")
@@ -34,17 +54,6 @@ function (vcpkg_config)
 
     set(VCPKG_CMD ${VCPKG_DIR}/${VCPKG_BINARY})
     set(VCPKG_CMD ${VCPKG_CMD} PARENT_SCOPE)
-
-    ExternalProject_Add(vcpkg
-        GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
-        GIT_TAG 2022.01.01
-        INSTALL_COMMAND ${BOOTSTRAP_CMD}
-        PREFIX "vcpkg"
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-    )
-
-    set(VCPKG_DEPENDENCIES "vcpkg" PARENT_SCOPE)
 endfunction()
 
 # installs PACKAGE_NAME
